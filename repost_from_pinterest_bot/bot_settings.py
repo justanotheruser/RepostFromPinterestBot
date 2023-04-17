@@ -37,7 +37,7 @@ def load_settings(file_name) -> Optional[BotSettings]:
             loaded = yaml.load(file, Loader=yaml.SafeLoader)
             return BotSettingsSchema.load(loaded)
     except (yaml.YAMLError, marshmallow.exceptions.MarshmallowError) as e:
-        logging.critical(f"Failed to read settings: {e}")
+        logging.error(f"Failed to read settings: {e}")
         return None
     except FileNotFoundError as e:
         logging.warning(f"Settings are not loaded: {e}")
@@ -45,7 +45,7 @@ def load_settings(file_name) -> Optional[BotSettings]:
         try:
             save_settings(file_name, default_settings)
         except Exception as e:
-            logging.critical(f"Failed to write default settings to {file_name}: {e}")
+            logging.error(f"Failed to write default settings to {file_name}: {e}")
             return None
         return default_settings
 

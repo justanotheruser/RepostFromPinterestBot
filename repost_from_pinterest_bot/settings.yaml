@@ -1,0 +1,7 @@
+pinterest:
+  number_of_images: 10
+  queries:
+  - мемы
+  - природа
+posting:
+  frequency_hours: 1

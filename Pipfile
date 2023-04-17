@@ -6,7 +6,8 @@ name = "pypi"
 [packages]
 marshmallow-dataclass = "*"
 pyyaml = "*"
-pydantic = "*"
+aiogram = "==3.0.0b7"
+pydantic = {extras = ["dotenv"], version = "*"}
 
 [dev-packages]
 pytest = "*"
