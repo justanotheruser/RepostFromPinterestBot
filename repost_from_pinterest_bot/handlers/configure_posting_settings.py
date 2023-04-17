@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -7,6 +9,9 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from repost_from_pinterest_bot.bot_settings import BotSettings, save_settings
 from repost_from_pinterest_bot.config_reader import config
 from repost_from_pinterest_bot.keyboards import make_row_keyboard
+from repost_from_pinterest_bot.posting import scheduler
+import aioschedule as schedule
+
 
 router = Router()
 
@@ -50,6 +55,7 @@ async def posting_frequency_chosen(message: Message, state: FSMContext):
         pinterest=BotSettings.Pinterest(queries=user_data['queries'], number_of_images=user_data['number_of_images']),
         posting=BotSettings.Posting(frequency_hours=user_data['posting_frequency']))
     save_settings(config.bot_settings_file, bot_settings)
+    scheduler.reschedule(bot_settings.posting.frequency_hours)
     await message.answer(
         text=f"Вы выбрали парсить по {bot_settings.pinterest.number_of_images} картинок, найденных по ключам "
              f"{bot_settings.pinterest.queries} и постить их раз в {bot_settings.posting.frequency_hours} час(а/ов)",

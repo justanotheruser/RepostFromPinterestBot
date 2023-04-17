@@ -8,6 +8,7 @@ marshmallow-dataclass = "*"
 pyyaml = "*"
 aiogram = "==3.0.0b7"
 pydantic = {extras = ["dotenv"], version = "*"}
+aioschedule = "*"
 
 [dev-packages]
 pytest = "*"
