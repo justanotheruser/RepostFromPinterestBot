@@ -4,6 +4,7 @@ from pydantic import BaseSettings, SecretStr
 class Settings(BaseSettings):
     bot_token: SecretStr
     bot_settings_file: str
+    images_root_dir: str
     channel_id: str
 
     class Config:

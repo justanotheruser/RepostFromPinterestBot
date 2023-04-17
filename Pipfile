@@ -9,6 +9,7 @@ pyyaml = "*"
 aiogram = "==3.0.0b7"
 pydantic = {extras = ["dotenv"], version = "*"}
 aioschedule = "*"
+selenium = "*"
 
 [dev-packages]
 pytest = "*"
