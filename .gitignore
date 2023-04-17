@@ -1,0 +1,7 @@
+__pycache__/
+.idea
+.eggs/
+repost_from_pinterest_bot.egg-info/
+.env
+*.log
+tests/
