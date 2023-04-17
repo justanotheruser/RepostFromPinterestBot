@@ -1,9 +1,11 @@
 import asyncio
 import logging
-import typing
+from typing import Optional
 
 import aioschedule as schedule
 from aiogram import Bot
+
+from repost_from_pinterest_bot.upload import upload_images_from_dir
 
 
 async def run_scheduler_loop():
@@ -14,23 +16,28 @@ async def run_scheduler_loop():
 
 class PostingScheduler:
     def __init__(self):
-        self.bot: typing.Optional[Bot] = None
-        self.channel_id: typing.Optional[str] = None
-        self.job: typing.Optional[schedule.Job] = None
+        self.bot: Optional[Bot] = None
+        self.channel_id: Optional[str] = None
+        self.job: Optional[schedule.Job] = None
+        self.current_images_dir: Optional[str] = None
+        self.uploaded_images = []
 
     def configure(self, bot: Bot, channel_id: str):
         self.bot = bot
         self.channel_id = channel_id
 
     async def post_images(self):
-        await self.bot.send_message(self.channel_id, 'Hello!')
+        if not self.uploaded_images:
+            self.uploaded_images = upload_images_from_dir(self.current_images_dir)
+        for uploaded_image in self.uploaded_images:
+            await self.bot.send_photo(self.channel_id, uploaded_image)
 
-    def reschedule(self, hours):
+    def reschedule(self, hours: int):
         if hours > 0:
             if self.job:
                 schedule.cancel_job(self.job)
             logging.info(f'Scheduled posting every {hours} hour(s)')
-            # TODO: hours
+            # TODO: seconds->hours
             self.job = schedule.every(hours).seconds.do(self.post_images)
 
 
