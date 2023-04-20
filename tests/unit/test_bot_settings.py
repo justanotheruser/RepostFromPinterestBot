@@ -1,21 +1,19 @@
 import os.path
 
-from repost_from_pinterest_bot.bot_settings import load_settings, save_settings, empty_settings
+from repost_from_pinterest_bot.bot_settings import BotSettings, load_settings, save_settings
 
 
 def test_no_settings_file(tmp_path):
     file_path = os.path.join(tmp_path, 'settings.yaml')
     bot_settings = load_settings(file_path)
-    assert os.path.exists(file_path)
-    assert bot_settings == empty_settings()
+    assert not os.path.exists(file_path)
+    assert bot_settings is None
 
 
 def test_save_and_load_settings(tmp_path):
     file_path = os.path.join(tmp_path, 'settings.yaml')
-    settings = empty_settings()
-    settings.pinterest.queries = ['мемы', 'природа']
-    settings.pinterest.number_of_images = 5
-    settings.posting.frequency_hours = 1
+    settings = BotSettings(pinterest=BotSettings.Pinterest(queries=['мемы', 'природа'], number_of_images=5),
+                           posting=BotSettings.Posting(frequency_hours=1))
     save_settings(file_path, settings)
     loaded_settings = load_settings(file_path)
     assert settings == loaded_settings
