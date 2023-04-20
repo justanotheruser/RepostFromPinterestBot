@@ -29,14 +29,15 @@ class ImageDownloader:
         await asyncio.to_thread(self._blocking_download)
 
     def _blocking_download(self):
-        create_empty_dir(self.images_root_dir)
         downloads_dir = os.path.join(self.images_root_dir, datetime.today().strftime('%d.%m.%Y'))
+        create_empty_dir(downloads_dir)
         for query in self.settings.queries:
             save_images(query, self.settings.number_of_images, downloads_dir)
         self.current_images_dir = downloads_dir
 
     async def change_settings(self, settings: BotSettings.Pinterest):
         if self.settings != settings:
+            self.settings = settings
             await self.download()
 
     def has_finished(self):

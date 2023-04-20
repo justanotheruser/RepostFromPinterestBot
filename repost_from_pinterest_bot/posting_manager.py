@@ -28,10 +28,10 @@ class PostingManager:
             logging.error('Failed to load settings')
             # TODO: send email
 
-    def change_settings(self, settings: BotSettings):
+    async def change_settings(self, settings: BotSettings):
         if self.image_downloader is None:
             self.image_downloader = ImageDownloader(settings.pinterest, self.images_root_dir)
-        self.image_downloader.change_settings(settings.pinterest)
+        await self.image_downloader.change_settings(settings.pinterest)
         save_settings(self.settings_file, settings)
         self.scheduler.reschedule(settings.posting.frequency_hours, self.post_images)
 

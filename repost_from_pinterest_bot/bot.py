@@ -32,6 +32,7 @@ async def main():
                 data: Dict[str, Any]
         ) -> Any:
             data["posting_manager"] = posting_manager
+            return await handler(event, data)
 
     dp.message.middleware(AddPostingManagerMiddleware())
     dp.include_router(start.router)
