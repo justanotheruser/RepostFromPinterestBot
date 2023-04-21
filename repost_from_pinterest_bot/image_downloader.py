@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 from datetime import datetime
+from typing import Optional
 
 from bot_settings import BotSettings
 from pinterest.save_images import save_images
@@ -17,13 +18,13 @@ def create_empty_dir(dir_path):
 
 
 class ImageDownloader:
-    def __init__(self, settings: BotSettings.Pinterest, images_root_dir: str):
-        self.settings = settings
+    def __init__(self, images_root_dir: str):
         self.images_root_dir = images_root_dir
         self.current_images_dir = None
+        self.settings: Optional[BotSettings.Pinterest] = None
 
     async def download(self):
-        if not self.settings.queries:
+        if not self.settings or not self.settings.queries:
             return
         self.current_images_dir = None
         await asyncio.to_thread(self._blocking_download)
