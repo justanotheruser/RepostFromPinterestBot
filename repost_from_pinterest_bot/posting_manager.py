@@ -7,6 +7,8 @@ from bot_settings import BotSettings, load_settings, save_settings
 from image_downloader import ImageDownloader
 from upload import upload_images_from_dir
 
+logger = logging.getLogger('RepostFromPinterestBot')
+
 
 class PostingManager:
     CHECK_FOR_DOWNLOADED_IMAGES_EVERY_X_MINUTES = 1
@@ -23,9 +25,10 @@ class PostingManager:
         self.posting_job = None
 
     async def start(self):
-        self.settings = load_settings(self.settings_file)
-        if self.settings:
-            await self._on_settings_changed()
+        #self.settings = load_settings(self.settings_file)
+        #if self.settings:
+        #    await self._on_settings_changed()
+        pass
 
     async def change_settings(self, settings: BotSettings):
         self.settings = settings
@@ -45,7 +48,7 @@ class PostingManager:
 
     async def start_posting(self):
         if not self.image_downloader.has_finished():
-            logging.warning("Attempt to post images failed because they're not fully downloaded yet")
+            logger.warning("Attempt to post images failed because they're not fully downloaded yet")
             return
         schedule.cancel_job(self.start_posting_job)
         if not self.uploaded_images:
@@ -57,10 +60,10 @@ class PostingManager:
         try:
             await self.bot.send_photo(self.channel_id, next(self.uploaded_images_gen))
         except StopIteration:
-            logging.info("Finished posing")
+            logger.info("Finished posing")
             schedule.cancel_job(self.posting_job)
 
     def make_uploaded_images_gen(self):
         for uploaded_image in self.uploaded_images:
-            logging.info(uploaded_image)
+            logger.info(uploaded_image)
             yield uploaded_image

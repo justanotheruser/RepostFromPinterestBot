@@ -446,11 +446,11 @@
         },
         "marshmallow-dataclass": {
             "hashes": [
-                "sha256:45d9910d44a1b03978eb48e4098f691a01bb268fb86dac662b42636bbed92266",
-                "sha256:a59fe346cebc37b670ca68dbd44c56d9198d98a7ff3ebcb864c77b899eee5b6e"
+                "sha256:3290a13517f126dc3b9541fa04d38e809b6c73dac5cd66d1b1e43341c93fe783",
+                "sha256:438196e119138a8d61d45ce763341fa0e1be5bf8ae12d52ae4562cfdbe68393c"
             ],
             "index": "pypi",
-            "version": "==8.5.12"
+            "version": "==8.5.13"
         },
         "multidict": {
             "hashes": [
@@ -671,11 +671,11 @@
         },
         "selenium": {
             "hashes": [
-                "sha256:28430ac54a54fa59ad1f5392a1b89b169fe3ab2c2ccd1a9a10b6fe74f36cd6da",
-                "sha256:61cda3a304f82637162bc155cae7bf88fdb04c115fa2cb1c1c2e1358fcd19a9f"
+                "sha256:478fae77cdfaec32adb1e68d59632c8c191f920535282abcaa2d1a3d98655624",
+                "sha256:4c19e6aac202719373108d53a5a8e9336ba8d2b25822ca32ae6ff37acbabbdbe"
             ],
             "index": "pypi",
-            "version": "==4.8.3"
+            "version": "==4.9.0"
         },
         "sniffio": {
             "hashes": [

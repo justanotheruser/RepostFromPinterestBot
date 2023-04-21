@@ -7,6 +7,9 @@ import yaml
 from marshmallow_dataclass import class_schema
 
 
+logger = logging.getLogger('RepostFromPinterestBot')
+
+
 @dataclass
 class BotSettings:
     @dataclass
@@ -36,13 +39,13 @@ def load_settings(file_name) -> Optional[BotSettings]:
             loaded = yaml.load(file, Loader=yaml.SafeLoader)
             settings = BotSettingsSchema.load(loaded)
     except (yaml.YAMLError, marshmallow.exceptions.MarshmallowError) as e:
-        logging.error(f"Invalid settings file: {e}")
+        logger.error(f"Invalid settings file: {e}")
         return None
     except FileNotFoundError as e:
-        logging.warning(f"Settings file not found: {e}")
+        logger.warning(f"Settings file not found: {e}")
         return None
 
-    logging.info(f'Loaded settings: {settings}')
+    logger.info(f'Loaded settings: {settings}')
     return settings
 
 
