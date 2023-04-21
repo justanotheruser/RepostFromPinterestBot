@@ -13,10 +13,10 @@ logger = logging.getLogger('RepostFromPinterestBot')
 
 def create_empty_dir(dir_path):
     if os.path.exists(dir_path) and os.path.isdir(dir_path):
-        logger.info(f'Deleting existing dir {dir_path}')
+        logger.info(f'Удаляем папку {dir_path}')
         shutil.rmtree(dir_path)
     os.makedirs(dir_path)
-    logger.info(f'Created dir {dir_path}')
+    logger.info(f'Создали папку {dir_path}')
 
 
 class ImageDownloader:

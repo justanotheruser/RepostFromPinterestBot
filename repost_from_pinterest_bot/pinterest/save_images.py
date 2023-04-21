@@ -17,6 +17,8 @@ SIGNUP_MODAL_POPUP_CLOSE_BTN_XPATH = '//div[@data-test-id="full-page-signup-clos
 PIN_LINK_XPATH = '//div[@class="gridCentered"]//div[@data-test-id="pin"]//a'
 PIN_IMAGE_XPATH = '//div[@id="mweb-unauth-container"]//div[@data-test-id="closeup-body-landscape"]//img'
 
+logger = logging.getLogger('RepostFromPinterestBot.Pinterest')
+
 
 def get_pinterest_search_url(query: str):
     return f'https://ru.pinterest.com/search/pins/?q={query}&rs=typed'
@@ -28,16 +30,18 @@ def close_signup_modal_popup(driver: WebDriver):
     except TimeoutException:
         # No popup
         return
-    logging.info('Modal popup about signing up is detected')
+    logger.info('Modal popup about signing up is detected')
     popup = driver.find_element(By.XPATH, SIGNUP_MODAL_POPUP_XPATH)
     close_btn = popup.find_element(By.XPATH, SIGNUP_MODAL_POPUP_CLOSE_BTN_XPATH)
     close_btn.click()
-    logging.info('Model popup about signing up is closed')
+    logger.info('Model popup about signing up is closed')
 
 
 def save_screenshot(el, output_dir: str, file_path: str):
-    with open(os.path.join(output_dir, file_path), 'wb') as file:
+    file_path = os.path.join(output_dir, file_path)
+    with open(file_path, 'wb') as file:
         file.write(el.screenshot_as_png)
+    logger.info(f"Сохранили картинку {file_path}")
 
 
 def save_pin(driver, output_dir: str, pin_link: str):
@@ -79,12 +83,12 @@ def save_from_displayed_search_results(driver: WebDriver, already_saved: typing.
 def scroll_down(driver: WebDriver, y_pos=None):
     if not y_pos:
         y_pos = 'document.body.scrollHeight'
-    logging.debug(f'Scroll down to {y_pos}')
+    logger.debug(f'Scroll down to {y_pos}')
     driver.execute_script(f"window.scrollTo(0,{y_pos});")
 
 
 def scroll_up(driver: WebDriver):
-    logging.debug('Scroll up')
+    logger.debug('Scroll up')
     driver.execute_script("window.scrollTo(0,0);")
 
 
@@ -95,24 +99,24 @@ def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: s
     :param max_images: Save at most this many
     :param output_dir: Path to folder where images will be saved (should exist)
     """
-    logging.info(f'save_pinterest_images is called: query={query}, max_images={max_images}, dir_path={output_dir}')
+    logger.info(f'save_pinterest_images is called: query={query}, max_images={max_images}, dir_path={output_dir}')
     driver.get(get_pinterest_search_url(query))
-    logging.info(f'Opened search page {driver.current_url}')
+    logger.info(f'Открыли {driver.current_url}')
     all_saved_pin_links = set()
     while len(all_saved_pin_links) < max_images:
         saved_pin_links = save_from_displayed_search_results(
             driver, all_saved_pin_links, max_images - len(all_saved_pin_links), output_dir)
         if len(saved_pin_links) == 0:
             if len(all_saved_pin_links) == 0:
-                logging.warning("Didn't found any images")
+                logger.warning("Не нашли ни одной картинки")
             else:
-                logging.warning(f'No new images found before we reached target of {max_images}')
+                logger.warning(f'Не нашли новых картинок до того, как набрали {max_images}')
             break
         else:
-            logging.info(f'Saved {len(saved_pin_links)} images')
+            logger.info(f'Сохранили {len(saved_pin_links)} картинок')
         all_saved_pin_links.update(saved_pin_links)
         scroll_down(driver)
-    logging.debug(all_saved_pin_links)
+    logger.debug(all_saved_pin_links)
 
 
 def save_images(query: str, max_images: int, output_dir: str):
@@ -126,10 +130,10 @@ def save_images(query: str, max_images: int, output_dir: str):
         browser.set_window_size(1350, 3000)
         do_save_images(browser, query=query, max_images=max_images, output_dir=output_dir)
     except Exception as e:
-        logging.critical(e)
+        logger.critical(e)
     browser.close()
     browser.quit()
-    logging.info('Browser quit')
+    logger.info('Закрыли браузер')
 
 
 if __name__ == '__main__':

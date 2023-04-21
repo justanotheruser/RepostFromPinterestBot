@@ -49,9 +49,10 @@ async def posting_frequency_chosen(message: Message, state: FSMContext, posting_
     bot_settings = BotSettings(
         pinterest=BotSettings.Pinterest(queries=user_data['queries'], number_of_images=user_data['number_of_images']),
         posting=BotSettings.Posting(frequency_hours=user_data['posting_frequency']))
-    await posting_manager.change_settings(bot_settings)
     await message.answer(
         text=f"Вы выбрали парсить по {bot_settings.pinterest.number_of_images} картинок, найденных по ключам "
              f"{bot_settings.pinterest.queries} и постить их раз в {bot_settings.posting.frequency_hours} час(а/ов)",
         reply_markup=ReplyKeyboardRemove())
     await state.clear()
+    await posting_manager.change_settings(bot_settings)
+

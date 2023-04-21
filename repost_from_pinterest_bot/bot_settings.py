@@ -39,13 +39,13 @@ def load_settings(file_name) -> Optional[BotSettings]:
             loaded = yaml.load(file, Loader=yaml.SafeLoader)
             settings = BotSettingsSchema.load(loaded)
     except (yaml.YAMLError, marshmallow.exceptions.MarshmallowError) as e:
-        logger.error(f"Invalid settings file: {e}")
+        logger.error(f"Неверный файл настроек: {e}")
         return None
     except FileNotFoundError as e:
-        logger.warning(f"Settings file not found: {e}")
+        logger.warning(f"Файл с сохранёнными настройками не найден: {e}")
         return None
 
-    logger.info(f'Loaded settings: {settings}')
+    logger.info(f'Загрузили сохранённые настройки: {settings}')
     return settings
 
 

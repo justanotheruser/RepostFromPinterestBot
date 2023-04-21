@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
-from repost_from_pinterest_bot.chat_logger import TelegramLoggerHandler
+from repost_from_pinterest_bot.telegram_logger import TelegramLoggerHandler
 
 router = Router()
 
