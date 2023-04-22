@@ -1,3 +1,5 @@
+import os
+
 from pydantic import BaseSettings, SecretStr
 
 
@@ -9,7 +11,7 @@ class Settings(BaseSettings):
     bot_admin_user_id: int
 
     class Config:
-        env_file = '.env'
+        env_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.env')
         env_file_encoding = 'utf-8'
 
 
