@@ -37,7 +37,7 @@ def load_settings(file_name) -> Optional[BotSettings]:
     :return: BotSettings or None if file not found or not a valid settings file
     """
     try:
-        with open(file_name, 'r', encoding='utf-8') as file:
+        with open(os.path.expanduser(file_name), 'r', encoding='utf-8') as file:
             loaded = yaml.load(file, Loader=yaml.SafeLoader)
             settings = BotSettingsSchema.load(loaded)
     except (yaml.YAMLError, marshmallow.exceptions.MarshmallowError) as e:

@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 
 import aioschedule as schedule
 from aiogram import Bot, Dispatcher
@@ -65,4 +66,5 @@ def setup_file_logger(logger):
 
 
 if __name__ == '__main__':
+    os.system("kill -9 $(ps ax | grep firefox | fgrep -v grep | awk '{ print $1 }')")
     asyncio.run(main())
