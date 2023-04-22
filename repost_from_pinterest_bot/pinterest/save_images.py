@@ -40,7 +40,7 @@ def close_signup_modal_popup(driver: WebDriver):
 
 def save_screenshot(el, output_dir: str, file_path: str):
     file_path = os.path.join(output_dir, file_path)
-    with open(file_path, 'wb') as file:
+    with open(os.path.expanduser(file_path), 'wb') as file:
         file.write(el.screenshot_as_png)
     logger.info(f"Сохранили картинку {file_path}")
 
