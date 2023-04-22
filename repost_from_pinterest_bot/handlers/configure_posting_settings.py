@@ -4,9 +4,9 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from repost_from_pinterest_bot.bot_settings import BotSettings
-from repost_from_pinterest_bot.keyboards import make_row_keyboard
-from repost_from_pinterest_bot.posting_manager import PostingManager
+from bot_settings import BotSettings
+from keyboards import make_row_keyboard
+from posting_manager import PostingManager
 
 router = Router()
 
@@ -55,4 +55,3 @@ async def posting_frequency_chosen(message: Message, state: FSMContext, posting_
         reply_markup=ReplyKeyboardRemove())
     await state.clear()
     await posting_manager.change_settings(bot_settings)
-
