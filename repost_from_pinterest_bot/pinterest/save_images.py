@@ -10,7 +10,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait, TimeoutException
 
-from repost_from_pinterest_bot.pinterest.utils import create_firefox_driver, second_tab, setup_logger
+from pinterest.utils import create_firefox_driver, second_tab, setup_logger
 
 SIGNUP_MODAL_POPUP_XPATH = '//div[@data-test-id="fullPageSignupModal"]'
 SIGNUP_MODAL_POPUP_CLOSE_BTN_XPATH = '//div[@data-test-id="full-page-signup-close-button"]/button'

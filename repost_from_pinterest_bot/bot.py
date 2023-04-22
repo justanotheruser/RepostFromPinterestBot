@@ -12,7 +12,7 @@ from telegram_logger import TelegramLoggerHandler
 from config_reader import config
 from handlers import start, configure_posting_settings
 from posting_manager import PostingManager
-from repost_from_pinterest_bot.scheduler import run_scheduler_loop
+from scheduler import run_scheduler_loop
 
 
 async def main():
