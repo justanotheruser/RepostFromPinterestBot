@@ -1,18 +1,18 @@
 import asyncio
 import logging
-from typing import Callable, Dict, Any, Awaitable
 
 import aioschedule as schedule
-from aiogram import BaseMiddleware
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import CallbackQuery
 
-from telegram_logger import TelegramLoggerHandler
 from config_reader import config
 from handlers import start, configure_posting_settings
+from middlewares.add_posting_manager import AddPostingManagerMiddleware
+from middlewares.add_telegram_logger_handler import AddTelegramLoggerHandlerMiddleware
+from middlewares.check_access_rights import CheckAccessRightsMiddleware
 from posting_manager import PostingManager
 from scheduler import run_scheduler_loop
+from telegram_logger import TelegramLoggerHandler
 
 
 async def main():
@@ -27,17 +27,8 @@ async def main():
 
     posting_manager = PostingManager(bot, config.bot_settings_file, config.images_root_dir, config.channel_id)
 
-    class AddPostingManagerMiddleware(BaseMiddleware):
-        async def __call__(
-                self,
-                handler: Callable[[CallbackQuery, Dict[str, Any]], Awaitable[Any]],
-                event: CallbackQuery,
-                data: Dict[str, Any]
-        ) -> Any:
-            data["posting_manager"] = posting_manager
-            return await handler(event, data)
-
-    dp.message.middleware(AddPostingManagerMiddleware())
+    dp.update.outer_middleware(CheckAccessRightsMiddleware([config.bot_admin_user_id]))
+    dp.message.middleware(AddPostingManagerMiddleware(posting_manager))
     dp.include_router(start.router)
     dp.include_router(configure_posting_settings.router)
 
@@ -52,18 +43,7 @@ def setup_telegram_logger(bot, dp, logger):
     th.setFormatter(th_formatter)
     logger.addHandler(th)
     schedule.every().second.do(th.send_to_user)
-
-    class AddTelegramLoggerHandlerMiddleware(BaseMiddleware):
-        async def __call__(
-                self,
-                handler: Callable[[CallbackQuery, Dict[str, Any]], Awaitable[Any]],
-                event: CallbackQuery,
-                data: Dict[str, Any]
-        ) -> Any:
-            data["telegram_logger_handler"] = th
-            return await handler(event, data)
-
-    dp.message.middleware(AddTelegramLoggerHandlerMiddleware())
+    dp.message.middleware(AddTelegramLoggerHandlerMiddleware(th))
 
 
 def setup_console_logger(logger):
