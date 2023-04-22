@@ -61,7 +61,7 @@ class PostingManager:
         if not self.uploaded_images:
             self.uploaded_images = upload_images_from_dir(self.image_downloader.get_current_images_dir())
         self.uploaded_images_gen = self.make_uploaded_images_gen()
-        self.posting_job = schedule.every(self.settings.posting.frequency_hours).seconds.do(self.post)
+        self.posting_job = schedule.every(self.settings.posting.frequency_hours).hours.do(self.post)
         logger.info(f"Запланировали отправку картинок каждые {self.settings.posting.frequency_hours} часов")
 
     async def post(self):
