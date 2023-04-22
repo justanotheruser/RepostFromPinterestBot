@@ -19,6 +19,7 @@ async def main():
     logger = logging.getLogger('RepostFromPinterestBot')
     logger.setLevel(logging.INFO)
     setup_console_logger(logger)
+    setup_file_logger(logger)
 
     dp = Dispatcher(storage=MemoryStorage())
     bot = Bot(token=config.bot_token.get_secret_value())
@@ -48,6 +49,14 @@ def setup_telegram_logger(bot, dp, logger):
 
 def setup_console_logger(logger):
     ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+    ch.setFormatter(ch_formatter)
+    logger.addHandler(ch)
+
+
+def setup_file_logger(logger):
+    ch = logging.FileHandler('RepostFromPinterestBot.log', encoding='utf-8')
     ch.setLevel(logging.INFO)
     ch_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s - %(message)s')
     ch.setFormatter(ch_formatter)
