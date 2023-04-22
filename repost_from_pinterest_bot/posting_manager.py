@@ -32,6 +32,7 @@ class PostingManager:
 
     async def change_settings(self, settings: Optional[BotSettings]):
         """Change settings for posting. Use settings=None to stop posting."""
+        logger.info(f"Настройки изменены на {settings}")
         self.settings = settings
         save_settings(self.settings_file, self.settings)
         await self._on_settings_changed()

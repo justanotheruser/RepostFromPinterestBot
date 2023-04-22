@@ -20,6 +20,7 @@ async def main():
     logger.setLevel(logging.INFO)
     setup_console_logger(logger)
     setup_file_logger(logger)
+    logger.info(f'Запускаемся с конфигом {config}')
 
     dp = Dispatcher(storage=MemoryStorage())
     bot = Bot(token=config.bot_token.get_secret_value())
