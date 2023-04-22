@@ -1,11 +1,13 @@
 import contextlib
 import logging
-import sys
 import os
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+logger = logging.getLogger('RepostFromPinterestBot.Pinterest')
 
 
 def create_firefox_driver(headless=True):
@@ -13,7 +15,7 @@ def create_firefox_driver(headless=True):
     if headless:
         options.add_argument('-headless')
     driver = webdriver.Firefox(options=options, service_log_path=os.devnull)
-    logging.info('Firefox driver created')
+    logger.info('Firefox driver created')
     return driver
 
 
@@ -22,7 +24,7 @@ def second_tab(driver, url):
     original_window_handle = driver.current_window_handle
     driver.switch_to.new_window('tab')
     driver.get(url)
-    logging.info(f'Opened {driver.current_url} in another tab')
+    logger.info(f'Opened {driver.current_url}')
     yield
     driver.close()
     driver.switch_to.window(original_window_handle)
