@@ -4,7 +4,7 @@ import os
 import shutil
 from datetime import datetime
 from typing import Optional
-
+import threading
 from bot_settings import BotSettings
 from pinterest.save_images import save_images
 
@@ -24,10 +24,12 @@ class ImageDownloader:
         self.images_root_dir = images_root_dir
         self.current_images_dir = None
         self.settings: Optional[BotSettings.Pinterest] = None
+        self.stop_downloading_event = threading.Event()
 
     async def download(self):
         if not self.settings or not self.settings.queries:
             return
+        self.stop_downloading_event.clear()
         self.current_images_dir = None
         await asyncio.to_thread(self._blocking_download)
 
@@ -35,16 +37,18 @@ class ImageDownloader:
         downloads_dir = os.path.join(self.images_root_dir, datetime.today().strftime('%d.%m.%Y'))
         create_empty_dir(downloads_dir)
         for query in self.settings.queries:
-            save_images(query, self.settings.number_of_images, downloads_dir)
+            save_images(query, self.settings.number_of_images, downloads_dir, self.stop_downloading_event)
         self.current_images_dir = downloads_dir
 
     async def change_settings(self, settings: BotSettings.Pinterest):
-        if self.settings != settings:
-            self.settings = settings
-            await self.download()
+        self.settings = settings
+        await self.download()
 
     def has_finished(self):
         return self.current_images_dir is not None
 
     def get_current_images_dir(self):
         return self.current_images_dir
+
+    def stop_downloading(self):
+        self.stop_downloading_event.set()

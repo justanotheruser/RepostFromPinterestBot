@@ -1,5 +1,6 @@
 import logging
 import os
+import threading
 import time
 import typing
 import uuid
@@ -92,18 +93,19 @@ def scroll_up(driver: WebDriver):
     driver.execute_script("window.scrollTo(0,0);")
 
 
-def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: str):
+def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: str, stop_downloading: threading.Event):
     """
     :param driver: WebDriver instance
     :param query: Search query
     :param max_images: Save at most this many
     :param output_dir: Path to folder where images will be saved (should exist)
+    :param stop_downloading: when set - stop any further downloading
     """
     logger.info(f'save_pinterest_images is called: query={query}, max_images={max_images}, dir_path={output_dir}')
     driver.get(get_pinterest_search_url(query))
     logger.info(f'Открыли {driver.current_url}')
     all_saved_pin_links = set()
-    while len(all_saved_pin_links) < max_images:
+    while len(all_saved_pin_links) < max_images and not stop_downloading.is_set():
         saved_pin_links = save_from_displayed_search_results(
             driver, all_saved_pin_links, max_images - len(all_saved_pin_links), output_dir)
         if len(saved_pin_links) == 0:
@@ -119,16 +121,18 @@ def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: s
     logger.debug(all_saved_pin_links)
 
 
-def save_images(query: str, max_images: int, output_dir: str):
+def save_images(query: str, max_images: int, output_dir: str, stop_downloading: threading.Event):
     """
     :param query: Search query
     :param max_images: Save at most this many
     :param output_dir: Path to folder where images will be saved (should exist)
+    :param stop_downloading: when set - stop any further downloading
     """
     browser = create_firefox_driver(headless=True)
     try:
         browser.set_window_size(1350, 3000)
-        do_save_images(browser, query=query, max_images=max_images, output_dir=output_dir)
+        do_save_images(browser, query=query, max_images=max_images, output_dir=output_dir,
+                       stop_downloading=stop_downloading)
     except Exception as e:
         logger.critical(e)
     browser.close()

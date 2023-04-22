@@ -1,11 +1,13 @@
+import errno
 import logging
+import os
+import typing
 from dataclasses import dataclass, asdict
 from typing import Optional
 
 import marshmallow
 import yaml
 from marshmallow_dataclass import class_schema
-
 
 logger = logging.getLogger('RepostFromPinterestBot')
 
@@ -49,6 +51,14 @@ def load_settings(file_name) -> Optional[BotSettings]:
     return settings
 
 
-def save_settings(file_name, settings: BotSettings):
-    with open(file_name, 'w', encoding='utf-8') as file:
-        yaml.dump(asdict(settings), file, allow_unicode=True)
+def save_settings(file_name, settings: typing.Optional[BotSettings]):
+    """Saves settings (or removes settings file if settings=None)"""
+    if settings:
+        with open(file_name, 'w', encoding='utf-8') as file:
+            yaml.dump(asdict(settings), file, allow_unicode=True)
+    else:
+        try:
+            os.remove(file_name)
+        except OSError as e:
+            if e.errno != errno.ENOENT:
+                raise
