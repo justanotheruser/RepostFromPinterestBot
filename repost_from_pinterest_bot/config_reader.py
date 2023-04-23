@@ -16,3 +16,5 @@ class Settings(BaseSettings):
 
 
 config = Settings()
+config.bot_settings_file = os.path.expanduser(config.bot_settings_file)
+config.images_root_dir = os.path.expanduser(config.images_root_dir)
