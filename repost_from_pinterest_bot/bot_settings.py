@@ -54,8 +54,11 @@ def load_settings(file_name) -> Optional[BotSettings]:
 def save_settings(file_name, settings: typing.Optional[BotSettings]):
     """Saves settings (or removes settings file if settings=None)"""
     if settings:
-        with open(file_name, 'w', encoding='utf-8') as file:
-            yaml.dump(asdict(settings), file, allow_unicode=True)
+        try:
+            with open(file_name, 'w', encoding='utf-8') as file:
+                yaml.dump(asdict(settings), file, allow_unicode=True)
+        except Exception as e:
+            logger.error(f'Failed to save settings: {e}')
     else:
         try:
             os.remove(file_name)
