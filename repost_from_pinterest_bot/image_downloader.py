@@ -20,8 +20,9 @@ def create_empty_dir(dir_path):
 
 
 class ImageDownloader:
-    def __init__(self, images_root_dir: str):
+    def __init__(self, images_root_dir: str, failed_pages_dir: str):
         self.images_root_dir = images_root_dir
+        self.failed_pages_dir = failed_pages_dir
         self.current_images_dir = None
         self.settings: Optional[BotSettings.Pinterest] = None
         self.stop_downloading_event = threading.Event()
@@ -37,7 +38,8 @@ class ImageDownloader:
         downloads_dir = os.path.join(self.images_root_dir, datetime.today().strftime('%d.%m.%Y'))
         create_empty_dir(downloads_dir)
         for query in self.settings.queries:
-            save_images(query, self.settings.number_of_images, downloads_dir, self.stop_downloading_event)
+            save_images(query, self.settings.number_of_images, downloads_dir, self.failed_pages_dir,
+                        self.stop_downloading_event)
         self.current_images_dir = downloads_dir
 
     async def change_settings(self, settings: BotSettings.Pinterest):

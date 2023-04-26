@@ -28,7 +28,8 @@ async def main():
 
     setup_telegram_logger(bot, dp, logger)
 
-    posting_manager = PostingManager(bot, config.bot_settings_file, config.images_root_dir, config.channel_id)
+    posting_manager = PostingManager(bot, config.bot_settings_file, config.images_root_dir, config.failed_pages_dir,
+                                     config.channel_id)
 
     dp.update.outer_middleware(CheckAccessRightsMiddleware([config.bot_admin_user_id]))
     dp.message.middleware(AddPostingManagerMiddleware(posting_manager))

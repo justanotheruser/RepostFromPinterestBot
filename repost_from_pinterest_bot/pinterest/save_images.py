@@ -45,8 +45,8 @@ def save_screenshot(el, output_dir: str, file_path: str):
     logger.info(f"Сохранили картинку {file_path}")
 
 
-def save_pin(driver, output_dir: str, pin_link: str):
-    with second_tab(driver, pin_link):
+def save_pin(driver: WebDriver, output_dir: str, pin_link: str, failed_pages_dir: str):
+    with second_tab(driver, pin_link, failed_pages_dir):
         close_signup_modal_popup(driver)
 
         # Scroll down an up to get rid of 'Show similar' popup at the bottom
@@ -60,7 +60,7 @@ def save_pin(driver, output_dir: str, pin_link: str):
 
 
 def save_from_displayed_search_results(driver: WebDriver, already_saved: typing.Set[str], max_images: int,
-                                       output_dir: str) -> typing.Set[str]:
+                                       output_dir: str, failed_pages_dir: str) -> typing.Set[str]:
     """
     :param driver: Selenium WebDriver instance
     :param already_saved: Links to already saved pins
@@ -76,7 +76,7 @@ def save_from_displayed_search_results(driver: WebDriver, already_saved: typing.
         pin_link = pin_link_el.get_attribute('href')
         if pin_link in already_saved or pin_link in saved_pins:
             continue
-        save_pin(driver, output_dir, pin_link)
+        save_pin(driver, output_dir, pin_link, failed_pages_dir)
         saved_pins.add(pin_link)
     return saved_pins
 
@@ -93,12 +93,14 @@ def scroll_up(driver: WebDriver):
     driver.execute_script("window.scrollTo(0,0);")
 
 
-def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: str, stop_downloading: threading.Event):
+def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: str, failed_pages_dir: str,
+                   stop_downloading: threading.Event):
     """
     :param driver: WebDriver instance
     :param query: Search query
     :param max_images: Save at most this many
     :param output_dir: Path to folder where images will be saved (should exist)
+    :param failed_pages_dir Path to folder where pages that caused parser to fail will be saved (if any)
     :param stop_downloading: when set - stop any further downloading
     """
     logger.info(f'save_pinterest_images is called: query={query}, max_images={max_images}, dir_path={output_dir}')
@@ -107,7 +109,7 @@ def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: s
     all_saved_pin_links = set()
     while len(all_saved_pin_links) < max_images and not stop_downloading.is_set():
         saved_pin_links = save_from_displayed_search_results(
-            driver, all_saved_pin_links, max_images - len(all_saved_pin_links), output_dir)
+            driver, all_saved_pin_links, max_images - len(all_saved_pin_links), output_dir, failed_pages_dir)
         if len(saved_pin_links) == 0:
             if len(all_saved_pin_links) == 0:
                 logger.warning("Не нашли ни одной картинки")
@@ -121,18 +123,19 @@ def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: s
     logger.debug(all_saved_pin_links)
 
 
-def save_images(query: str, max_images: int, output_dir: str, stop_downloading: threading.Event):
+def save_images(query: str, max_images: int, output_dir: str, failed_pages_dir: str, stop_downloading: threading.Event):
     """
     :param query: Search query
     :param max_images: Save at most this many
     :param output_dir: Path to folder where images will be saved (should exist)
+    :param failed_pages_dir Path to folder where pages that caused parser to fail will be saved (if any)
     :param stop_downloading: when set - stop any further downloading
     """
     browser = create_firefox_driver(headless=True)
     try:
         browser.set_window_size(1350, 3000)
         do_save_images(browser, query=query, max_images=max_images, output_dir=output_dir,
-                       stop_downloading=stop_downloading)
+                       failed_pages_dir=failed_pages_dir, stop_downloading=stop_downloading)
     except Exception as e:
         logger.critical(e)
     browser.close()

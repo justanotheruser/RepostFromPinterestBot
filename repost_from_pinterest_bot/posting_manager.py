@@ -14,10 +14,11 @@ logger = logging.getLogger('RepostFromPinterestBot')
 class PostingManager:
     CHECK_FOR_DOWNLOADED_IMAGES_EVERY_X_MINUTES = 1
 
-    def __init__(self, bot: Bot, settings_file: str, images_root_dir: str, channel_id: str):
+    def __init__(self, bot: Bot, settings_file: str, images_root_dir: str, failed_pages_dir: str, channel_id: str):
         self.bot = bot
         self.settings_file = settings_file
         self.images_root_dir = images_root_dir
+        self.failed_pages_dir = failed_pages_dir
         self.channel_id = channel_id
         self.settings: Optional[BotSettings] = None
         self.uploaded_images = []
@@ -53,7 +54,7 @@ class PostingManager:
         logger.info(
             f"Проверяем, что картинки скачались, раз в {self.CHECK_FOR_DOWNLOADED_IMAGES_EVERY_X_MINUTES} минут")
         if self.image_downloader is None:
-            self.image_downloader = ImageDownloader(self.images_root_dir)
+            self.image_downloader = ImageDownloader(self.images_root_dir, self.failed_pages_dir)
         await self.image_downloader.change_settings(self.settings.pinterest)
 
     async def start_posting(self):
