@@ -60,18 +60,21 @@ def save_pin(driver: WebDriver, output_dir: str, pin_link: str, failed_pages_dir
 
 
 def save_from_displayed_search_results(driver: WebDriver, already_saved: typing.Set[str], max_images: int,
-                                       output_dir: str, failed_pages_dir: str) -> typing.Set[str]:
+                                       output_dir: str, failed_pages_dir: str, stop_downloading: threading.Event) -> \
+typing.Set[str]:
     """
     :param driver: Selenium WebDriver instance
     :param already_saved: Links to already saved pins
     :param max_images: Save at most this many
     :param output_dir: Path to folder where images will be saved (should exist)
+    :param failed_pages_dir: Path to folder where pages that caused parser to fail will be saved (if any)
+    :param stop_downloading: when set - stop any further downloading
     :return: set of links to saved pins
     """
     saved_pins = set()
     pin_link_els = driver.find_elements(By.XPATH, PIN_LINK_XPATH)
     for pin_link_el in pin_link_els:
-        if len(saved_pins) >= max_images:
+        if len(saved_pins) >= max_images or stop_downloading.is_set():
             break
         pin_link = pin_link_el.get_attribute('href')
         if pin_link in already_saved or pin_link in saved_pins:
@@ -109,7 +112,8 @@ def do_save_images(driver: WebDriver, query: str, max_images: int, output_dir: s
     all_saved_pin_links = set()
     while len(all_saved_pin_links) < max_images and not stop_downloading.is_set():
         saved_pin_links = save_from_displayed_search_results(
-            driver, all_saved_pin_links, max_images - len(all_saved_pin_links), output_dir, failed_pages_dir)
+            driver, all_saved_pin_links, max_images - len(all_saved_pin_links), output_dir, failed_pages_dir,
+            stop_downloading)
         if len(saved_pin_links) == 0:
             if len(all_saved_pin_links) == 0:
                 logger.warning("Не нашли ни одной картинки")
