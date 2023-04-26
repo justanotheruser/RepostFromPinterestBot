@@ -42,6 +42,8 @@ class PostingManager:
             schedule.cancel_job(self.start_posting_job)
         if self.posting_job:
             schedule.cancel_job(self.posting_job)
+        if self.uploaded_images:
+            self.uploaded_images = None
         if not self.settings:
             if self.image_downloader:
                 self.image_downloader.stop_downloading()
