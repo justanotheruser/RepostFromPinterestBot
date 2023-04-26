@@ -7,6 +7,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from bot_settings import BotSettings
 from keyboards import make_row_keyboard
 from posting_manager import PostingManager
+from telegram_logger import TelegramLoggerHandler
 
 router = Router()
 
@@ -21,7 +22,8 @@ class ConfigurePosting(StatesGroup):
 
 
 @router.message(Command("configure"))
-async def cmd_start(message: Message, state: FSMContext):
+async def cmd_start(message: Message, telegram_logger_handler: TelegramLoggerHandler, state: FSMContext):
+    telegram_logger_handler.set_user(message.from_user)
     await state.set_state(ConfigurePosting.choosing_queries)
     await message.answer(text="Введите список ключей")
 

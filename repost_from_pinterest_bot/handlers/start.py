@@ -1,8 +1,8 @@
 from aiogram import Router
 from aiogram.filters import Command
+from aiogram.filters import Text
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from aiogram.filters import Text
 
 from keyboards import make_config_keyboard
 from posting_manager import PostingManager

@@ -2,9 +2,10 @@ import asyncio
 import logging
 import os
 import shutil
+import threading
 from datetime import datetime
 from typing import Optional
-import threading
+
 from bot_settings import BotSettings
 from pinterest.save_images import save_images
 

@@ -5,8 +5,8 @@ import sys
 import uuid
 
 from selenium import webdriver
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 logger = logging.getLogger('RepostFromPinterestBot.Pinterest')
