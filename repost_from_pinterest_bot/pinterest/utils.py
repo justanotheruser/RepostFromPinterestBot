@@ -32,7 +32,9 @@ def second_tab(driver: WebDriver, url, failed_pages_dir: str):
     except Exception as e:
         logger.error(e)
         os.makedirs(failed_pages_dir, exist_ok=True)
-        page_file = os.path.join(failed_pages_dir, f'{uuid.uuid4()}.html')
+        error_id = f'{uuid.uuid4()}'
+        driver.save_screenshot(os.path.join(failed_pages_dir, f'{error_id}.png'))
+        page_file = os.path.join(failed_pages_dir, f'{error_id}.html')
         with open(page_file, mode='w', encoding='utf-8') as f:
             f.write(driver.page_source)
         logger.info(f'Сохранили проблемную страницу как {page_file}')
@@ -53,3 +55,10 @@ def wait_until_completion(driver, retries=20) -> None:
             attempt += 1
     except Exception as ex:
         logger.exception('Error at wait_until_completion: {}'.format(ex))
+
+
+def save_screenshot(el, output_dir: str, file_path: str):
+    file_path = os.path.join(output_dir, file_path)
+    with open(file_path, 'wb') as file:
+        file.write(el.screenshot_as_png)
+    logger.info(f"Сохранили картинку {file_path}")

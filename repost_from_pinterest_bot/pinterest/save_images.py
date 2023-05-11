@@ -1,5 +1,4 @@
 import logging
-import os
 import threading
 import time
 import typing
@@ -10,7 +9,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait, TimeoutException
 
-from pinterest.utils import create_firefox_driver, second_tab, wait_until_completion
+from pinterest.utils import create_firefox_driver, second_tab, wait_until_completion, save_screenshot
 
 SIGNUP_MODAL_POPUP_XPATH = '//div[@data-test-id="fullPageSignupModal"]'
 SIGNUP_MODAL_POPUP_CLOSE_BTN_XPATH = '//div[@data-test-id="full-page-signup-close-button"]/button'
@@ -35,13 +34,6 @@ def close_signup_modal_popup(driver: WebDriver):
     close_btn = popup.find_element(By.XPATH, SIGNUP_MODAL_POPUP_CLOSE_BTN_XPATH)
     close_btn.click()
     logger.info('Model popup about signing up is closed')
-
-
-def save_screenshot(el, output_dir: str, file_path: str):
-    file_path = os.path.join(output_dir, file_path)
-    with open(file_path, 'wb') as file:
-        file.write(el.screenshot_as_png)
-    logger.info(f"Сохранили картинку {file_path}")
 
 
 def save_pin(driver: WebDriver, output_dir: str, pin_link: str, failed_pages_dir: str):
