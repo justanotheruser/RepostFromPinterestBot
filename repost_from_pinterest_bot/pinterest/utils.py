@@ -1,7 +1,7 @@
 import contextlib
 import logging
 import os
-import sys
+import time
 import uuid
 
 from selenium import webdriver
@@ -42,14 +42,14 @@ def second_tab(driver: WebDriver, url, failed_pages_dir: str):
         WebDriverWait(driver, 1).until(EC.number_of_windows_to_be(1))
 
 
-def setup_logger(loglevel=logging.INFO, filename: str = None):
-    if filename:
-        handler = logging.FileHandler(filename, mode='a', encoding='utf-8')
-    else:
-        handler = logging.StreamHandler(stream=sys.stdout)
-    handler.setLevel(loglevel)
-    handler.setFormatter(
-        logging.Formatter('%(asctime)s [%(levelname)s] [%(threadName)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
-    logger = logging.getLogger()
-    logger.setLevel(loglevel)
-    logger.addHandler(handler)
+def wait_until_completion(driver, retries=20) -> None:
+    """waits until the page have completed loading"""
+    try:
+        state = ""
+        attempt = 0
+        while state != "complete" or attempt < retries:
+            time.sleep(0.5)
+            state = driver.execute_script("return document.readyState")
+            attempt += 1
+    except Exception as ex:
+        logger.exception('Error at wait_until_completion: {}'.format(ex))
