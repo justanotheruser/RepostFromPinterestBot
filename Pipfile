@@ -10,6 +10,8 @@ aiogram = "==3.0.0b7"
 pydantic = {extras = ["dotenv"], version = "*"}
 aioschedule = "*"
 selenium = "*"
+pillow = "*"
+imagehash = "*"
 
 [dev-packages]
 pytest = "*"

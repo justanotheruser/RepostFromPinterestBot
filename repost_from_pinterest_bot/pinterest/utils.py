@@ -3,7 +3,10 @@ import logging
 import os
 import time
 import uuid
+from io import BytesIO
 
+import imagehash
+from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
@@ -57,11 +60,16 @@ def wait_until_completion(driver, retries=20) -> None:
         logger.exception('Error at wait_until_completion: {}'.format(ex))
 
 
-def save_screenshot(el, output_dir: str, file_path: str):
-    file_path = os.path.join(output_dir, file_path)
+def save_screenshot(el, output_dir: str):
+    pin_png = el.screenshot_as_png
+    stream = BytesIO(pin_png)
+    pin_image = Image.open(stream).convert("RGBA")
+    stream.close()
+    pin_hash = imagehash.average_hash(pin_image)
+    file_path = os.path.join(output_dir, f'{pin_hash}.png')
     if os.path.exists(file_path):
         logger.info(f"Пин уже сохранён {file_path}")
         return
     with open(file_path, 'wb') as file:
-        file.write(el.screenshot_as_png)
+        file.write(pin_png)
     logger.info(f"Сохранили пин {file_path}")

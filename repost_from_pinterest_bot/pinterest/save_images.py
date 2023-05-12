@@ -2,7 +2,6 @@ import logging
 import threading
 import time
 import typing
-import re
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.webdriver import WebDriver
@@ -15,7 +14,6 @@ SIGNUP_MODAL_POPUP_XPATH = '//div[@data-test-id="fullPageSignupModal"]'
 SIGNUP_MODAL_POPUP_CLOSE_BTN_XPATH = './/div[@data-test-id="full-page-signup-close-button"]/button'
 PIN_LINK_XPATH = '//div[@class="gridCentered"]//div[@data-test-id="pin"]//a'
 PIN_IMAGE_XPATH = '//div[@id="mweb-unauth-container"]//div[@data-test-id="closeup-body-landscape"]//img'
-PIN_ID_REGEX = re.compile(r'.*pinterest.com/pin/(\d+)/.*')
 
 logger = logging.getLogger('RepostFromPinterestBot.Pinterest')
 
@@ -47,9 +45,8 @@ def save_pin(driver: WebDriver, output_dir: str, pin_link: str, failed_pages_dir
         time.sleep(0.1)
         scroll_up(driver)
 
-        pin_id = get_pin_id(driver)
         img_el = driver.find_element(By.XPATH, PIN_IMAGE_XPATH)
-        save_screenshot(img_el, output_dir, f'{pin_id}.png')
+        save_screenshot(img_el, output_dir)
 
 
 def get_pin_id(driver: WebDriver) -> str:
