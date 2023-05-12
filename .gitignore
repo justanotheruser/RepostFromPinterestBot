@@ -6,3 +6,4 @@ repost_from_pinterest_bot.egg-info/
 *.log
 temp/
 repost_from_pinterest_bot/settings.yaml
+.python-version
