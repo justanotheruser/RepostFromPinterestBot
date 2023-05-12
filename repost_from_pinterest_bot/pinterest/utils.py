@@ -59,6 +59,9 @@ def wait_until_completion(driver, retries=20) -> None:
 
 def save_screenshot(el, output_dir: str, file_path: str):
     file_path = os.path.join(output_dir, file_path)
+    if os.path.exists(file_path):
+        logger.info(f"Пин уже сохранён {file_path}")
+        return
     with open(file_path, 'wb') as file:
         file.write(el.screenshot_as_png)
-    logger.info(f"Сохранили картинку {file_path}")
+    logger.info(f"Сохранили пин {file_path}")

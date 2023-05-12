@@ -33,6 +33,26 @@ def test_save_images():
                 stop_downloading=stop_downloading_event_stub, headless=True)
 
 
+def test_same_image_in_different_search_requests():
+    testing_images_dir, failed_pages_dir = make_dirs()
+    stop_downloading_event_stub = threading.Event()
+    save_images('мемы', max_images=1, output_dir=testing_images_dir, failed_pages_dir=failed_pages_dir,
+                stop_downloading=stop_downloading_event_stub, headless=True)
+    save_images('смешные мемы', max_images=4, output_dir=testing_images_dir, failed_pages_dir=failed_pages_dir,
+                stop_downloading=stop_downloading_event_stub, headless=True)
+
+
+def test_get_pin_id():
+    driver = create_firefox_driver()
+    testing_images_dir, failed_pages_dir = make_dirs()
+    try:
+        save_pin(driver, testing_images_dir, 'https://ru.pinterest.com/pin/1023161609073882968/?mt=login',
+                 failed_pages_dir)
+    finally:
+        driver.close()
+        driver.quit()
+
+
 def setup_logger(loglevel=logging.INFO):
     handler = logging.StreamHandler(stream=sys.stdout)
     handler.setLevel(loglevel)
@@ -45,4 +65,4 @@ def setup_logger(loglevel=logging.INFO):
 
 if __name__ == '__main__':
     setup_logger()
-    test_save_images()
+    test_same_image_in_different_search_requests()
